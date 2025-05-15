@@ -82,6 +82,6 @@ The `rl_experiment.py` script is configured with the following parameters for th
 
 ## Citations
 The design of Substratum was verified using open-source Sysmon logs generated, in part, by MITRE Caldera. Please review the data source licensing prior to use.
-- Kemmerer, Mike, and Craig Wampler. (2017) 2018. “Mitre/Brawl-Public-Game-001.” The MITRE Corporation. https://github.com/mitre/brawl-public-game-001.(Used sysmon-brawl_public_game_001.JSON)
+- Kemmerer, Mike, and Craig Wampler. (2017) 2018. “Mitre/Brawl-Public-Game-001.” The MITRE Corporation. https://github.com/mitre/brawl-public-game-001. (Used sysmon-brawl_public_game_001.JSON)
 - Pratomo, Baskoro Adi. (2023) 2023. “Bazz-066/Cerberus-Trace.” https://github.com/bazz-066/cerberus-trace. (Used NLME.csv)
   - [!IMPORTANT]: Before running `rl_experiment.py` on the BRAWL dataset, rename the following columns:  `ParentProcessId` -> `ppid` and `ProcessId` -> pid to enable `normalize_logs.process_relations_csv` to properly read in process ID fields.
