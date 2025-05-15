@@ -1,6 +1,7 @@
 # Substratum
-Bahirah Adewunmi\
-b280@umbc.edu\
+
+
+Bahirah Adewunmi | b280@umbc.edu | University of Maryland, Baltimore County
 Currently under A Provisional US Patent:
 
 This methodology models operating system state and transitions a graph, derived from open-source System Monitor (Sysmon) logs that were generated, in part, by MITRE Caldera, an autonomous adversary emulation platform. To address the variety in system event types, fields, and log formats, a mechanism was developed to capture and model parent-child processes from Sysmon logs. An OpenAI Gymnasium environment (`SubstratumGraphEnv`) was constructed to establish the perceptible basis for an RL environment. To surmount TorchRL compatibility limitations, a customized PyTorch interface was also built (SubstratumBridge) to translate gymnasium object into the PyTorch framework, enabling composite RL agent observations and discrete actions executed on the graphs. Graph Convolutional Networks (GCNs) concretize the graph’s local and global state, which feed the distinct policy and critic heads of an Advantage Actor-Critic (A2C) model. 
