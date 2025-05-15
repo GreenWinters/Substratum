@@ -19,7 +19,7 @@ The project utilizes PyTorch, TorchRL, Gymnasium, NetworkX, and Torch Geometric.
 ## Installation
 1. Clone the repository.
 2. Ensure you have Python 3.8+ installed.
-3. Install the required libraries using the `requirements.txt` file. It's recommended to use a virtual environment such as [virtualenv](https://virtualenv.pypa.io/en/latest/) or [Anaconda](https://www.anaconda.com/download).
+3. Install the required libraries using the `requirements.txt` file to ensure interoperability between the libraries. It's recommended to use a virtual environment such as [virtualenv](https://virtualenv.pypa.io/en/latest/) or [Anaconda](https://www.anaconda.com/download).
 ```
 pip install -r requirements.txt
 ```
