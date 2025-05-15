@@ -1,5 +1,5 @@
 # Substratum
-![NetworkX](./images/NetworkX.png) | ![OpenAI](./images/OpenAPI.png) | ![PyTorch](./images/PyTorch.png) | ![RL](./images/reinforcement-learning.png) 
+<img src="./images/NetworkX.png" width="48"> | ![OpenAI](./images/OpenAPI.png) | ![PyTorch](./images/PyTorch.png) | ![RL](./images/reinforcement-learning.png) 
 
 Bahirah Adewunmi | b280@umbc.edu | University of Maryland, Baltimore County
 Currently under A Provisional US Patent:
