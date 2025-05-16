@@ -9,7 +9,6 @@
 > [S] -> [U] -> [B] -> [S] -> [T] -> [R] -> [A] -> [T] -> [U] -> [M]
 > Receiving Feedback: +1010 -0101 +1111 -0000 ...
 
-Bahirah Adewunmi | b280@umbc.edu | University of Maryland, Baltimore County
 <br>
 <br>
 <br>
