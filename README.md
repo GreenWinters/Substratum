@@ -8,14 +8,9 @@
 > Initiating RL Sequence... Analyzing Graph State...
 > [S] -> [U] -> [B] -> [S] -> [T] -> [R] -> [A] -> [T] -> [U] -> [M]
 > Receiving Feedback: +1010 -0101 +1111 -0000 ...
-
 <br>
-<br>
-<br>
-NetworkX <img src="./images/NetworkX.png" width="48"> | Gymnasium <img src="./images/OpenAPI.png" width="48"> | PyTorch <img src="./images/PyTorch.png" width="48"> | RL <img src="./images/reinforcement-learning.png" width="48">
+| NetworkX <img src="./images/NetworkX.png" width="48"> | Gymnasium <img src="./images/OpenAPI.png" width="48"> | PyTorch <img src="./images/PyTorch.png" width="48"> | RL <img src="./images/reinforcement-learning.png" width="48">|
 
-
-Currently under A Provisional US Patent:
 
 This methodology models operating system state and transitions a graph, derived from open-source System Monitor (Sysmon) logs that were generated, in part, by MITRE Caldera, an autonomous adversary emulation platform. To address the variety in system event types, fields, and log formats, a mechanism was developed to capture and model parent-child processes from Sysmon logs. An OpenAI Gymnasium environment (`SubstratumGraphEnv`) was constructed to establish the perceptible basis for an RL environment. To surmount TorchRL compatibility limitations, a customized PyTorch interface was also built (SubstratumBridge) to translate gymnasium object into the PyTorch framework, enabling composite RL agent observations and discrete actions executed on the graphs. Graph Convolutional Networks (GCNs) concretize the graph’s local and global state, which feed the distinct policy and critic heads of an Advantage Actor-Critic (A2C) model. 
 
@@ -46,7 +41,8 @@ If you have a CUDA-enabled GPU, follow the instructions for your specific CUDA v
 
 ## Usage
 1. Prepare your log data: Place your Sysmon log files (CSV or JSON) in a designated directory (e.g., data/). Update the `csv_file_path` or `sysmon_log_path` variables in `normalize_logs.py` and `rl_experiment.py` accordingly.
-2. Run an experiment: Execute the `rl_experiment.py` script. This script will:
+ - [!IMPORTANT]: Before running `rl_experiment.py` on the BRAWL dataset, rename the following columns:  `ParentProcessId` -> `ppid` and `ProcessId` -> pid to enable `normalize_logs.process_relations_csv` to properly read in process ID fields.
+3. Run an experiment: Execute the `rl_experiment.py` script. This script will:
   - Load and process the specified log file using functions from `normalize_logs.py` and `net_analysis.py` to build a NetworkX graph.
   - The code converts the NetworkX graph into a Gymnasium graph space using `convert_nx_digraph_to_gym_graph` and  `graph_gym.py`.
   - Initializes the `SubstratumGraphEnv` and wrap it with `SubstratumBridge`.
@@ -98,4 +94,4 @@ The `rl_experiment.py` script is configured with the following parameters for th
 The design of Substratum was verified using open-source Sysmon logs generated, in part, by MITRE Caldera. Please review the data source licensing prior to use.
 - Kemmerer, Mike, and Craig Wampler. (2017) 2018. “Mitre/Brawl-Public-Game-001.” The MITRE Corporation. https://github.com/mitre/brawl-public-game-001. (Used sysmon-brawl_public_game_001.JSON)
 - Pratomo, Baskoro Adi. (2023) 2023. “Bazz-066/Cerberus-Trace.” https://github.com/bazz-066/cerberus-trace. (Used NLME.csv)
-  - [!IMPORTANT]: Before running `rl_experiment.py` on the BRAWL dataset, rename the following columns:  `ParentProcessId` -> `ppid` and `ProcessId` -> pid to enable `normalize_logs.process_relations_csv` to properly read in process ID fields.
+  
