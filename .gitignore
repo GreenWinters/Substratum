@@ -172,3 +172,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+sysmon-brawl_public_game_001.json
+NLME.csv

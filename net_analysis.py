@@ -6,7 +6,6 @@ from typing import Any
 from normalize_logs import process_relations_csv, process_relations_json
 from networkx.drawing.nx_agraph import graphviz_layout
 
-
 def clean_dicts(my_dict, enable_debugging_print:bool = False) -> dict:
     """
     Cleans the input dictionaries by removing any empty values.
@@ -47,7 +46,7 @@ def reconstruct_graph(graph:nx.Graph, traces_network:dict) -> nx.DiGraph:
     Reconstructs the graph from the given parameters. The keys of the outermost 
     dictionary become nodes in the NetworkX graph. These are treated as the starting 
     points or "parents" in the context of the dict.  The keys of the inner 
-    dictionaries ('zclMytLJqK', 'Procmon') become the nodes that are connected to the 
+    dictionaries become the nodes that are connected to the 
     parent nodes. These are the "children" in the dict.
     """
     for parent_node, connections in traces_network.items():
@@ -71,8 +70,6 @@ def reconstruct_graph(graph:nx.Graph, traces_network:dict) -> nx.DiGraph:
         for child_node, attributes in connections.items():
             if child_node not in graph.nodes:
                 graph.add_node(child_node)
-
-            # Add edge between parent and child
             weight = None
             if 'weight' in attributes and isinstance(attributes['weight'], list) and attributes['weight']:
                 try:
@@ -83,10 +80,7 @@ def reconstruct_graph(graph:nx.Graph, traces_network:dict) -> nx.DiGraph:
             if weight is not None:
                 graph.add_edge(parent_node, child_node, weight=weight)
             else:
-                graph.add_edge(parent_node, child_node) # Add edge without weight if not available or invalid
-
-            # Assuming attributes like child_path and child_type
-            # are consistent for the 'child' node
+                graph.add_edge(parent_node, child_node) 
             if 'child_path' in attributes:
                 graph.nodes[child_node]['path'] = attributes['child_path']
             if 'child_type' in attributes:
@@ -138,16 +132,16 @@ def downselect_visualize(digraph: nx.DiGraph) -> None:
     Args:
         digraph: A NetworkX DiGraph.
     """
-    candidate_nodes = [node for node in digraph.nodes() if digraph.out_degree(node) > 1] # Identify nodes with multiple child nodes (out-degree > 1)
+    candidate_nodes = [node for node in digraph.nodes() if digraph.out_degree(node) > 1] 
     if not candidate_nodes:
         print("No nodes found with multiple child nodes.")
         return
-    candidate_subgraph = digraph.subgraph(candidate_nodes) # Create a subgraph induced by these candidate nodes
-    weakly_connected_components_list = list(nx.weakly_connected_components(candidate_subgraph)) # Find weakly connected components in the candidate subgraph
+    candidate_subgraph = digraph.subgraph(candidate_nodes) 
+    weakly_connected_components_list = list(nx.weakly_connected_components(candidate_subgraph)) 
     if not weakly_connected_components_list:
         print("No interconnected nodes found with multiple child nodes.")
         return
-    valid_components = [] # Filter components to ensure all nodes in the component have multiple children in the original DiGraph
+    valid_components = [] 
     for component in weakly_connected_components_list:
         is_valid = True
         for node in component:
@@ -163,23 +157,22 @@ def downselect_visualize(digraph: nx.DiGraph) -> None:
     subgraph_to_visualize = digraph.subgraph(largest_component) # Create the subgraph to visualize from the original DiGraph
     edge_widths = [] # Determine edge widths based on weight attribute
     for u, v, data in subgraph_to_visualize.edges(data=True):
-        weight = data.get('weight', 0.01)  # Default weight to 1 if not present
+        weight = data.get('weight', 0.01)  # Default weight to .01 if not present
         edge_widths.append(weight * 0.01) 
-    # Visualize the subgraph
     if subgraph_to_visualize.nodes():   
             try:
                 node_sizes = [digraph.out_degree(node) * 1 for node in subgraph_to_visualize.nodes()]
-                pos = graphviz_layout(subgraph_to_visualize, prog='neato', args='-Gsep=7.0')  # You can try other programs like 'neato', 'fdp'
+                pos = graphviz_layout(subgraph_to_visualize, prog='neato', args='-Gsep=2.0')  # You can try other programs like 'neato', 'fdp'
                 nx.draw_networkx_nodes(subgraph_to_visualize, pos, node_size=node_sizes, node_color='#aec7e8', alpha=0.5)
-                nx.draw_networkx_edges(subgraph_to_visualize, pos, width=edge_widths, alpha=0.6, edge_color='#484a4a')
-                nx.draw_networkx_labels(subgraph_to_visualize, pos, font_size=7, font_weight="bold", font_color='#000000', font_family='serif')
+                nx.draw_networkx_edges(subgraph_to_visualize, pos, width=edge_widths, alpha=0.4, edge_color="#3c3f3f")
+                nx.draw_networkx_labels(subgraph_to_visualize, pos, font_size=10, verticalalignment='top',font_weight="bold", font_color='#000000', font_family='serif')
                 plt.axis('off')
                 plt.show()
             except Exception as e:
                 print(f"Error with Graphviz layout: {e}")
                 # Fallback to a NetworkX layout if Graphviz fails
                 pos = nx.spring_layout(subgraph_to_visualize, seed=42)
-                nx.draw(subgraph_to_visualize, pos, with_labels=True, node_size=node_sizes,
+                nx.draw(subgraph_to_visualize, pos, with_labels=True, k=0.3, node_size=node_sizes,
                         node_color="lightblue", font_size=5, arrowsize=10)
                 plt.title("Largest Subgraph with Interconnected Nodes (Multiple Children)")
                 plt.show()
@@ -196,18 +189,18 @@ def draw_graph_with_proportional_size(graph: nx.Graph) -> None:
     """
     node_sizes = [] # Determine node sizes based on the number of children (out-degree for DiGraph)
     if isinstance(graph, nx.DiGraph):
-        node_sizes = [graph.out_degree(node) * 5 for node in graph.nodes()] # Adjust scaling factor as needed
+        node_sizes = [graph.out_degree(node) * 5 for node in graph.nodes()]
     else:
-        node_sizes = [len(list(graph.neighbors(node))) * 5 for node in graph.nodes()] # Adjust scaling factor
-    edge_widths = [] # Determine edge widths based on weight attribute
+        node_sizes = [len(list(graph.neighbors(node))) * 5 for node in graph.nodes()] 
+    edge_widths = [] 
     for _, _, data in graph.edges(data=True):
-        weight = data.get('weight', 0.005)  # Default weight to 1 if not present
-        edge_widths.append(weight * 0.005)  # Adjust scaling factor as needed
+        weight = data.get('weight', 0.005) 
+        edge_widths.append(weight * 0.005)  
     try:
-        pos = graphviz_layout(graph, prog='neato', args='-Gsep=12.0')  # You can try other programs like 'neato', 'fdp'
-        nx.draw_networkx_nodes(graph, pos, node_size=node_sizes, node_color='#1f77b4', alpha=0.5)
-        nx.draw_networkx_edges(graph, pos, width=edge_widths, alpha=0.6, edge_color='#aaaaaa')
-        nx.draw_networkx_labels(graph, pos, font_size=7, font_weight="bold", font_color='#000000', font_family='serif')
+        pos = graphviz_layout(graph, prog='neato', args='-Gsep=12.0') 
+        nx.draw_networkx_nodes(graph, pos, node_size=node_sizes, node_color="#11521e", alpha=0.5)
+        nx.draw_networkx_edges(graph, pos, width=edge_widths, alpha=0.6, edge_color="#a49595")
+        nx.draw_networkx_labels(graph, pos, font_size=10, font_weight="bold", font_color='#000000', font_family='serif')
         plt.axis('off')
         plt.show()
     except Exception as e:
@@ -322,33 +315,27 @@ def find_longest_path_or_handle_cycles(graph: nx.DiGraph, weight: str = 'weight'
         except Exception as e:
              print(f"An error occurred while finding longest path in DAG: {e}")
              return None, None, f"Error finding longest path in DAG: {e}"
-
     else:
         print("Graph contains cycles. Cannot apply nx.dag_longest_path directly.")
         print("Calculating the condensation graph to find the longest path between strongly connected components.")
         # Calculate the condensation graph
         C = nx.condensation(graph)
         # We need to calculate weights for the edges in the condensation graph
-        # based on the original graph's edge weights. A simple approach is to sum
-        # the weights of all edges in the original graph that go between nodes
-        # in the corresponding strongly connected components.
+        # based on the original graph's edge weights. 
         C_weighted = nx.DiGraph()
         # Add nodes from the condensation graph (these are tuples of original nodes)
         C_weighted.add_nodes_from(C.nodes(data=True))
 
-        for u_scc, v_scc, data_c in C.edges(data=True):
-            u_nodes = C.nodes[u_scc]['members'] # Nodes in original graph in source SCC
-            v_nodes = C.nodes[v_scc]['members'] # Nodes in original graph in target SCC
+        for u_scc, v_scc, _ in C.edges(data=True):
+            u_nodes = C.nodes[u_scc]['members'] 
+            v_nodes = C.nodes[v_scc]['members'] 
             total_weight_between_sccs = 0.0
-            edges_contributing = [] # Optional: to inspect which edges contributed
-
-            # Find all edges in the original graph between nodes in these two SCCs
+            edges_contributing = [] 
             for u_orig in u_nodes:
                 for v_orig in v_nodes:
                     if graph.has_edge(u_orig, v_orig):
                         edge_data = graph.get_edge_data(u_orig, v_orig)
-                        original_edge_weight = edge_data.get(weight, 1.0) # Default to 1.0 if weight is missing
-                        # Convert weight to float, handle errors
+                        original_edge_weight = edge_data.get(weight, 1.0) 
                         try:
                             numerical_weight = float(_try_convert_string_to_number(original_edge_weight))
                             total_weight_between_sccs += numerical_weight
@@ -356,22 +343,13 @@ def find_longest_path_or_handle_cycles(graph: nx.DiGraph, weight: str = 'weight'
                         except (ValueError, TypeError):
                             print(f"Warning: Edge ({u_orig}, {v_orig}) has non-numerical or unconvertible weight '{original_edge_weight}'. Ignoring for condensation graph weight sum.")
             # Add edge to the weighted condensation graph if there's a connection
-            # If total_weight_between_sccs is 0 (e.g., no edges or all had non-numerical weights),
-            # we might choose not to add the edge in the condensation graph, or add it with weight 0.
-            # Adding with weight 0 is safer if zero-weight paths are meaningful.
-            # Let's add it with the calculated sum.
+            # If total_weight_between_sccs is 0 (e.g., no edges or all had non-numerical weights)
             if total_weight_between_sccs > 0 or (total_weight_between_sccs == 0 and edges_contributing):
                  C_weighted.add_edge(u_scc, v_scc, weight=total_weight_between_sccs)
-            # Note: Nodes in C_weighted are the same as in C (tuples of original nodes)
-        # Find the longest path in the weighted condensation graph
-        # This path consists of SCCs (tuples of original nodes)
         try:
             condensation_path_sccs = nx.dag_longest_path(C_weighted, weight='weight')
             condensation_path_length = nx.dag_longest_path_length(C_weighted, weight='weight')
             # The path is a list of SCCs. We return this list of tuples.
-            # Note: This does NOT give a path of individual nodes from the original graph.
-            # Finding a specific path of original nodes that traverses these SCCs
-            # and has this length is a separate, more complex problem.
             return condensation_path_length, condensation_path_sccs, "Longest path in the condensation graph (path of Strongly Connected Components)."
         except nx.NetworkXNoPath:
              # This can happen if the condensation graph has nodes but no edges
@@ -391,7 +369,7 @@ def find_longest_path_or_handle_cycles(graph: nx.DiGraph, weight: str = 'weight'
 
 
 # BRAWL Graph Construction
-# json_log_path = r"data\BRAWL.json"
+# json_log_path = r"data\sysmon-brawl_public_game_001.json"
 # BRAWL_G = graph_construction(json_log_path, from_json=True)
 # BRAWL Graph Analysis
 # BRAWL_analysis = graph_analysis(BRAWL_G)

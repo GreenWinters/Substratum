@@ -23,7 +23,7 @@ Usage:
 Dependencies:
 - Python standard libraries: json, csv, os, re, datetime, traceback
 Author:
-- Bahirah Adewunmi
+- 
 Date:
 - February 20, 2025
 """
